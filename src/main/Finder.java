@@ -31,7 +31,9 @@ public class Finder {
 		try {
 			List<SDRefactoring> refactorings = refDiff.detectAtCommit(repository, commitInicial);
 			for (SDRefactoring refactoring : refactorings) {
-				System.out.println(refactoring.getName());
+				System.out.println("\n\n"+refactoring.getEntityBefore().fullName().replace(" ", ""));
+				System.out.println(refactoring.getEntityAfter().fullName().replace(" ", ""));
+				System.out.println(refactoring.getRefactoringType().toString());
 			}
 			return 1;
 		} catch (Exception e) {
@@ -72,9 +74,9 @@ public class Finder {
 		try {
 			String file=cloneURL.substring(cloneURL.lastIndexOf("/")+1);
 			if(System.getProperty("os.name").contains("Linux"))
-				file="/home/jaziel/Dropbox/UFCG/Projeto/Dados/CSVs/"+file+" - refatoramentos.csv";
+				file="/home/jaziel/Dropbox/UFCG/Projeto/Dados/CSVs/Refatoramentos/Part 1"+file+".csv";
 			else
-				file="C:\\Users\\Jaziel Moreira\\Dropbox\\UFCG\\Projeto\\Dados\\CSVs\\"+file+" - refatoramentos.csv";
+				file="C:\\Users\\Jaziel Moreira\\Dropbox\\UFCG\\Projeto\\Dados\\CSVs\\Refatoramentos\\Part 1\\"+file+".csv";
 			CSV csv = new CSV(file);
 			RevWalk revWalk = new RevWalk(repository);
 			RevCommit commit;
@@ -84,7 +86,7 @@ public class Finder {
 				commit=revWalk.parseCommit(id);
 				List<SDRefactoring> refactorings = refDiff.detectAtCommit(repository, commit.getName());
 				for (SDRefactoring refactoring : refactorings) {
-					csv.addCsv(i,commit,refactoring);
+					csv.addCSV(i,commit,refactoring);
 				}
 				System.out.println(i+"# "+commit);
 				id=commit.getParent(0);
