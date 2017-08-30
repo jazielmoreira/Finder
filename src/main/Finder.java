@@ -1,6 +1,7 @@
 package main;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.util.List;
 
 import org.eclipse.jgit.lib.ObjectId;
@@ -72,21 +73,37 @@ public class Finder {
 	public int analiseMultipla(String commitInicial, int qtd){ 
 		RefDiff refDiff = new RefDiff();
 		try {
-			String file=cloneURL.substring(cloneURL.lastIndexOf("/")+1);
+			String aux=cloneURL.substring(cloneURL.lastIndexOf("/")+1);
+			File file;
 			if(System.getProperty("os.name").contains("Linux"))
-				file="/home/jaziel/Dropbox/UFCG/Projeto/Dados/CSVs/Refatoramentos/Part 1"+file+".csv";
+				file=new File("/home/jaziel/Dropbox/UFCG/Projeto/Dados/CSVs/Refatoramentos/Part 1");
 			else
-				file="C:\\Users\\Jaziel Moreira\\Dropbox\\UFCG\\Projeto\\Dados\\CSVs\\Refatoramentos\\Part 1\\"+file+".csv";
-			CSV csv = new CSV(file);
+				file=new File("C:\\Users\\Jaziel Moreira\\Dropbox\\UFCG\\Projeto\\Dados\\CSVs\\Refatoramentos\\Part 1\\");//+file+".csv";
+			
+			FileWriter writer = new FileWriter(new File(file,aux+" - log.txt"));
+			writer.write("URL Projeto: "+cloneURL);
+			writer.write("\nTotal de commits: "+qtd);
+			writer.write("\nCommit Inicial: "+commitInicial);
+			writer.flush();
+			
+			CSV csv = new CSV(new File(file,aux+".csv"));
 			RevWalk revWalk = new RevWalk(repository);
 			RevCommit commit;
 			ObjectId id=repository.resolve(commitInicial);
-			int cont=0;
+			int contError=0;
 			for(int i=0;i<qtd;i++){
 				commit=revWalk.parseCommit(id);
-				List<SDRefactoring> refactorings = refDiff.detectAtCommit(repository, commit.getName());
-				for (SDRefactoring refactoring : refactorings) {
-					csv.addCSV(i,commit,refactoring);
+				try {
+					List<SDRefactoring> refactorings = refDiff.detectAtCommit(repository, commit.getName());
+					for (SDRefactoring refactoring : refactorings) {
+						csv.addCSV(i,commit,refactoring);
+					}
+				}catch(Exception e) {
+					e.printStackTrace();
+					writer.write("\n\nErro ao detectar refatoramentos no commit #"+i+": "+commit.getName());
+					writer.write("\nErro: "+e.toString());
+					writer.flush();
+					contError++;
 				}
 				System.out.println(i+"# "+commit);
 				id=commit.getParent(0);
@@ -95,7 +112,10 @@ public class Finder {
 			System.out.println("FIM");
 			revWalk.close();
 			csv.close();
-			return cont;
+			writer.write("\n\nTotal de erros: "+contError);
+			writer.flush();
+			writer.close();
+			return contError;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

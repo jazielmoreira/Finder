@@ -10,16 +10,15 @@ import refdiff.core.rm2.model.refactoring.SDRefactoring;
 
 public class CSV {
 	
-	FileWriter writer;
+	private FileWriter writer;
 	
-	public CSV(String path) throws IOException {
-		File file = new File(path);
+	public CSV(File file) throws IOException {
 		writer = new FileWriter(file);
 		writer.write("Number;Commit;Parent;Msg_Commit;Refatoramento;Antes;Depois;Descricao_Completa");
 		writer.flush();
 	}
 	
-	public void addCSV(int number,RevCommit commit, SDRefactoring refactoring) throws Exception{
+	public void addCSV(int number,RevCommit commit, SDRefactoring refactoring) throws IOException{
 		writer.write("\n"+number);
 		writer.write(";"+commit.getName());
 		writer.write(";"+commit.getParent(0).getName());
