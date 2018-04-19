@@ -76,9 +76,9 @@ public class Finder {
 			String aux=cloneURL.substring(cloneURL.lastIndexOf("/")+1);
 			File file;
 			if(System.getProperty("os.name").contains("Linux"))
-				file=new File("/home/jaziel/Dropbox/UFCG/Projeto/Dados/CSVs/Refatoramentos/Part 1");
+				file=new File("/home/jaziel/Dropbox/UFCG/Projeto/Dados/Projetos a serem testados/Part 1");
 			else
-				file=new File("C:\\Users\\Jaziel Moreira\\Dropbox\\UFCG\\Projeto\\Dados\\CSVs\\Refatoramentos\\Part 1\\");//+file+".csv";
+				file=new File("C:\\Users\\Jaziel Moreira\\Dropbox\\UFCG\\Projeto\\Dados\\Projetos a serem testados\\Part 1\\");//+file+".csv";
 			
 			FileWriter writer = new FileWriter(new File(file,aux+" - log.txt"));
 			writer.write("URL Projeto: "+cloneURL);
