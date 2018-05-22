@@ -1,0 +1,64 @@
+Repository: https://github.com/crashub/crash
+Initial commit: 0be41acdebb125e6963d04864cbbfb3a4a6c7707
+Total commits: 1844
+
+Repository: https://github.com/glyptodon/guacamole-client
+Initial commit: 74124ca52df182dd305c42581cf3d57a1c76076f
+Total commits: 1736
+
+Repository: https://github.com/raphw/byte-buddy
+Initial commit: ac939080e04d8f43d48e886fbe144e408099f5e5
+Total commits: 3195
+
+Repository: https://github.com/Athou/commafeed
+Initial commit: 1d6296b40045a5e1e737bb01c4d2ebd2fdd5d572
+Total commits: 2064
+
+Repository: https://github.com/fabric8io/fabric8
+Initial commit: 9a4b8f7614993b37a6a05d93f1eb10f24d087a71
+Total commits: 10904
+
+Repository: https://github.com/BroadleafCommerce/BroadleafCommerce
+Initial commit: e5e3f8ea22ae82bb0c689c94ff8c57793535b201
+Total commits: 6199
+
+Repository: https://github.com/datastax/java-driver
+Initial commit: c8902fd7d16794bd47fe59b2371e4ac04d948544
+Total commits: 1289
+
+Repository: https://github.com/HubSpot/Singularity
+Initial commit: 394b4d37fd3db7bd62a72135859d96689e1fc641
+Total commits: 2182
+
+Repository: https://github.com/kuujo/copycat
+Initial commit: e105b428bd45b42ed92f28cffde5ccbee86af6fd
+Total commits: 2261
+
+Repository: https://github.com/FasterXML/jackson-databind
+Initial commit: 9c6a56cc7fbf467ba6a55fe1051c20362bd97c38
+Total commits: 3423
+
+Repository: https://github.com/Alluxio/alluxio
+Initial commit: 536b261b702b100abbf01e52244ead9915fbfc0d
+Total commits: 5422
+
+Repository: https://github.com/orientechnologies/orientdb
+Initial commit: 35ea4680d73a8ced9880fd0771d0d143a12c0f57
+Total commits: 9372
+
+Repository: https://github.com/undertow-io/undertow
+Initial commit: 5dfaa318b2763d23ce17eb98935084a5e2e7835b
+Total commits: 4040
+
+Repository: https://github.com/spring-projects/spring-data-rest
+Initial commit: 3cc5b46fbd79ec440f5cb9577d0d39d6b43d39fe
+Total commits: 960
+
+Repository: https://github.com/checkstyle/checkstyle
+Initial commit: dd07fd692a56b1f7496caac21a0342abdd25c03b
+Total commits: 7742
+
+Repository: https://github.com/eclipse/vert.x
+Initial commit: 47d15d66dcd56381ee07754545258d3c48537784
+Total commits: 1761
+

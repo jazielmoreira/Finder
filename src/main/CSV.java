@@ -14,7 +14,7 @@ public class CSV {
 	
 	public CSV(File file) throws IOException {
 		writer = new FileWriter(file);
-		writer.write("Number;Commit;Parent;Msg_Commit;Refatoramento;Antes;Depois;Descricao_Completa");
+		writer.write("Number;Commit;Parent;Refatoramento;Antes;Depois;Descricao_Completa");
 		writer.flush();
 	}
 	
@@ -22,7 +22,6 @@ public class CSV {
 		writer.write("\n"+number);
 		writer.write(";"+commit.getName());
 		writer.write(";"+commit.getParent(0).getName());
-		writer.write(";\""+commit.getShortMessage()+"\"");
 		writer.write(";"+refactoring.getName());
 		writer.write(";"+refactoring.getEntityBefore().fullName().replace(" ", "").replace("#", "."));
 		writer.write(";"+refactoring.getEntityAfter().fullName().replace(" ", "").replace("#", "."));

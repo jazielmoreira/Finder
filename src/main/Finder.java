@@ -18,6 +18,7 @@ public class Finder {
 	
 	private Repository repository;
 	private String cloneURL;
+	private String initialCommit;
 	
 	
 	
@@ -25,6 +26,7 @@ public class Finder {
 		GitService gitService = new GitServiceImpl(); 
 		this.cloneURL=cloneURL;
 		this.repository = gitService.cloneIfNotExists(folder, cloneURL);
+		initialCommit = null;
 	}
 	
 	public int analise(String commitInicial){ 
@@ -49,8 +51,9 @@ public class Finder {
 		int total=0;
 		try {
 			RevWalk revWalk = new RevWalk(repository);
-			RevCommit commit;
 			ObjectId id=repository.resolve(commitInicial);
+			RevCommit commit=revWalk.parseCommit(id);
+			initialCommit = commit.getName();
 			for(total=0;total<Integer.MAX_VALUE;total++){
 				commit=revWalk.parseCommit(id);
 				System.out.println(total+"# "+commit);
@@ -74,22 +77,24 @@ public class Finder {
 		RefDiff refDiff = new RefDiff();
 		try {
 			String aux=cloneURL.substring(cloneURL.lastIndexOf("/")+1);
-			File file;
-			if(System.getProperty("os.name").contains("Linux"))
-				file=new File("/home/jaziel/Dropbox/UFCG/Projeto/Dados/Projetos a serem testados/Part 1");
-			else
-				file=new File("C:\\Users\\Jaziel Moreira\\Dropbox\\UFCG\\Projeto\\Dados\\Projetos a serem testados\\Part 1\\");//+file+".csv";
+			File file = new File(System.getProperty("user.home") + File.separator + "Dropbox" + File.separator + "UFCG" +
+					File.separator + "Projeto" + File.separator + "Dados" + File.separator + "Projetos Dataset" + File.separator + "Part 1");
 			
-			FileWriter writer = new FileWriter(new File(file,aux+" - log.txt"));
-			writer.write("URL Projeto: "+cloneURL);
-			writer.write("\nTotal de commits: "+qtd);
-			writer.write("\nCommit Inicial: "+commitInicial);
-			writer.flush();
+			
+			
 			
 			CSV csv = new CSV(new File(file,aux+".csv"));
 			RevWalk revWalk = new RevWalk(repository);
-			RevCommit commit;
 			ObjectId id=repository.resolve(commitInicial);
+			RevCommit commit=revWalk.parseCommit(id);
+			initialCommit = commit.getName();
+			
+			FileWriter writer = new FileWriter(new File(file,aux+" - log.txt"));
+			writer.write("URL Projeto: "+cloneURL);
+			writer.write("\r\nTotal de commits: "+qtd);
+			writer.write("\r\nCommit Inicial: "+initialCommit);
+			writer.flush();
+			
 			int contError=0;
 			for(int i=0;i<qtd;i++){
 				commit=revWalk.parseCommit(id);
@@ -100,8 +105,8 @@ public class Finder {
 					}
 				}catch(Exception e) {
 					e.printStackTrace();
-					writer.write("\n\nErro ao detectar refatoramentos no commit #"+i+": "+commit.getName());
-					writer.write("\nErro: "+e.toString());
+					writer.write("\r\n\r\nErro ao detectar refatoramentos no commit #"+i+": "+commit.getName());
+					writer.write("\r\nErro: "+e.toString());
 					writer.flush();
 					contError++;
 				}
@@ -112,7 +117,7 @@ public class Finder {
 			System.out.println("FIM");
 			revWalk.close();
 			csv.close();
-			writer.write("\n\nTotal de erros: "+contError);
+			writer.write("\r\n\r\n Total de erros: "+contError);
 			writer.flush();
 			writer.close();
 			return contError;
@@ -122,6 +127,10 @@ public class Finder {
 			return -1;
 		}
 		
+	}
+	
+	public String getInitialCommit() {
+		return initialCommit;
 	}
 	
 }
