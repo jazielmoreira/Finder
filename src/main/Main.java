@@ -30,20 +30,28 @@ public class Main {
 		return totalCommits;
 	}
 	
+//	public static void main(String[] args) throws Exception {
+	//		FileReader fr = new FileReader("repositoryURLs.txt");
+	//		FileWriter fw = new FileWriter(new File("log.txt"), true);
+	//		Scanner in = new Scanner(fr);
+	//		while(in.hasNext()) {
+	//			String url = in.nextLine();
+	//			int totalCommit = find(url);
+	//			fw.write("Repository: " + url + "\r\n"); 
+	//			
+	//			fw.write("Initial commit: " + initialCommit + "\r\n");
+	//			fw.write("Total commits: " + totalCommit + "\r\n\r\n");
+	//			fw.flush();
+	//		}
+	//		fw.close();
+	//	}
+	
 	public static void main(String[] args) throws Exception {
-		FileReader fr = new FileReader("repositoryURLs.txt");
-		FileWriter fw = new FileWriter(new File("log.txt"), true);
-		Scanner in = new Scanner(fr);
-		while(in.hasNext()) {
-			String url = in.nextLine();
-			int totalCommit = find(url);
-			fw.write("Repository: " + url + "\r\n"); 
-			
-			fw.write("Initial commit: " + initialCommit + "\r\n");
-			fw.write("Total commits: " + totalCommit + "\r\n\r\n");
-			fw.flush();
-		}
-		fw.close();
+		String url = "https://github.com/moreiraJS/Purity";
+		String directory = System.getProperty("java.io.tmpdir") + File.separator + "Projeto" + File.separator;
+		Finder finder=new Finder(directory+url.substring(url.lastIndexOf("/")+1),url);
+		
+		finder.analise("94d73a5040f7fbeec9ed12210d83b33f38156c8b");
 	}
 	
 //	public static void main(String[] args) throws Exception {
