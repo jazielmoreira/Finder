@@ -1,7 +1,5 @@
 package main;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.util.List;
 
 import org.eclipse.jgit.lib.ObjectId;
@@ -18,119 +16,81 @@ public class Finder {
 	
 	private Repository repository;
 	private String cloneURL;
-	private String initialCommit;
 	
-	
-	
-	public Finder(String folder, String cloneURL) throws Exception {
+	public Finder(String cloneURL) throws Exception {
+		String downloadFolder = FileUtils.getDownloadFolder().getAbsolutePath();
 		GitService gitService = new GitServiceImpl(); 
+		
 		this.cloneURL=cloneURL;
-		this.repository = gitService.cloneIfNotExists(folder, cloneURL);
-		initialCommit = null;
+		this.repository = gitService.cloneIfNotExists(downloadFolder, cloneURL);
 	}
 	
-	public int analise(String commitInicial){ 
+	public int findRefactorings(String initialCommit, boolean shouldLog){
 		RefDiff refDiff = new RefDiff();
 		try {
-			List<SDRefactoring> refactorings = refDiff.detectAtCommit(repository, commitInicial);
-			for (SDRefactoring refactoring : refactorings) {
-				System.out.println("\n\n"+refactoring.getEntityBefore().fullName().replace(" ", ""));
-				System.out.println(refactoring.getEntityAfter().fullName().replace(" ", ""));
-				System.out.println(refactoring.getRefactoringType().toString());
-			}
-			return 1;
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return -1;
-		}
-		
-	}
-	
-	public int totalCommits(String commitInicial) {
-		int total=0;
-		try {
+			String projectName=getProjectNameFromUrl(cloneURL);
+			CSV csv = new CSV(projectName);
 			RevWalk revWalk = new RevWalk(repository);
-			ObjectId id=repository.resolve(commitInicial);
-			RevCommit commit=revWalk.parseCommit(id);
-			initialCommit = commit.getName();
-			for(total=0;total<Integer.MAX_VALUE;total++){
-				commit=revWalk.parseCommit(id);
-				System.out.println(total+"# "+commit);
-				id=commit.getParent(0);
-			}
+			ObjectId id=repository.resolve(initialCommit);
 			
-			System.out.println("FIM");
-			revWalk.close();
-			return total;
-		} catch (ArrayIndexOutOfBoundsException e) {
-			return total;
-		}catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return -1;
-		}
-		
-	}
-	
-	public int analiseMultipla(String commitInicial, int qtd){ 
-		RefDiff refDiff = new RefDiff();
-		try {
-			String aux=cloneURL.substring(cloneURL.lastIndexOf("/")+1);
-			File file = new File(System.getProperty("user.home") + File.separator + "Dropbox" + File.separator + "UFCG" +
-					File.separator + "Projeto" + File.separator + "Dados" + File.separator + "Projetos Dataset" + File.separator + "Part 1");
+			int numberOfCommits = getNumberOfCommits(initialCommit);
 			
+			Logger logger = new Logger(projectName, shouldLog);
+			logger.logURL(cloneURL);
+			logger.logTotalCommits(numberOfCommits);
 			
-			
-			
-			CSV csv = new CSV(new File(file,aux+".csv"));
-			RevWalk revWalk = new RevWalk(repository);
-			ObjectId id=repository.resolve(commitInicial);
-			RevCommit commit=revWalk.parseCommit(id);
-			initialCommit = commit.getName();
-			
-			FileWriter writer = new FileWriter(new File(file,aux+" - log.txt"));
-			writer.write("URL Projeto: "+cloneURL);
-			writer.write("\r\nTotal de commits: "+qtd);
-			writer.write("\r\nCommit Inicial: "+initialCommit);
-			writer.flush();
-			
-			int contError=0;
-			for(int i=0;i<qtd;i++){
-				commit=revWalk.parseCommit(id);
+			int errorCount = 0;
+			for(int i=0;i<numberOfCommits;i++){
+				RevCommit commit=revWalk.parseCommit(id);
 				try {
 					List<SDRefactoring> refactorings = refDiff.detectAtCommit(repository, commit.getName());
 					for (SDRefactoring refactoring : refactorings) {
 						csv.addCSV(i,commit,refactoring);
 					}
 				}catch(Exception e) {
+					errorCount++;
+					logger.logError(i, commit.getName(), e);
 					e.printStackTrace();
-					writer.write("\r\n\r\nErro ao detectar refatoramentos no commit #"+i+": "+commit.getName());
-					writer.write("\r\nErro: "+e.toString());
-					writer.flush();
-					contError++;
 				}
 				System.out.println(i+"# "+commit);
 				id=commit.getParent(0);
 			}
+			System.out.println("END!!!");
 			
-			System.out.println("FIM");
 			revWalk.close();
+			logger.logTotalErrors(errorCount);
+			logger.close();
 			csv.close();
-			writer.write("\r\n\r\n Total de erros: "+contError);
-			writer.flush();
-			writer.close();
-			return contError;
+			return errorCount;
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return -1;
 		}
 		
 	}
 	
-	public String getInitialCommit() {
-		return initialCommit;
+	public int getNumberOfCommits(String commitInicial) {
+		int total=0;
+		RevWalk revWalk = new RevWalk(repository);
+		try {
+			ObjectId id=repository.resolve(commitInicial);
+			RevCommit commit=revWalk.parseCommit(id);
+			for(total=0;;total++){
+				commit=revWalk.parseCommit(id);
+				id=commit.getParent(0);
+			}
+		} catch (ArrayIndexOutOfBoundsException e) {
+			revWalk.close();
+			return total;
+		}catch (Exception e) {
+			e.printStackTrace();
+			revWalk.close();
+			return -1;
+		}
 	}
 	
+	private String getProjectNameFromUrl(String url) {
+		int index = url.lastIndexOf("/");
+		return url.substring(index+1);	
+	}
 }
