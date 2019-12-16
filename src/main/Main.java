@@ -93,6 +93,7 @@ public class Main {
 			urls.add(url);
 			url = buff.readLine();
 		}
+		buff.close();
 		return urls;
 	}
 	
